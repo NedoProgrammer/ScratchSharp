@@ -1,5 +1,5 @@
-﻿<center><h1>ScratchSharp</h1></center>
-<center>A programming language that compiles to scratch.</center>
+<h1 align="center">ScratchSharp</h1></center>
+<p align="center">A programming language that compiles to scratch.</p>
 
 ## ...what?
 Yes, you heard it right! This project can convert a simple  "scripting" language to Scratch blocks.
