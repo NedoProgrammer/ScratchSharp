@@ -25,9 +25,15 @@ public class Repl
                 case ".showTree":
                 {
                     showTree = !showTree;
+                    AnsiConsole.MarkupLine($"[italic yellow]{(showTree ? "Now showing syntax trees.": "Now hiding syntax trees.")}[/]");
                     break;
                 }
                 default:
+                    if (code.StartsWith("."))
+                    {
+                        AnsiConsole.MarkupLine("[bold red]Unknown REPL command.[/]");
+                        break;
+                    }
                     ExceptionWrapper.SafelyRunCode(code, variables, showTree);
                     break;
             }

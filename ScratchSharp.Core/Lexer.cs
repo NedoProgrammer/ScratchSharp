@@ -28,9 +28,9 @@ public class Lexer
         if (_position >= _text.Length)
             return new SyntaxToken(SyntaxKind.Eof, _position, "\0", null);
         
+        var start = _position;
         if (char.IsDigit(Current))
         {
-            var start = _position;
             while(char.IsDigit(Current))
                 Next();
             var length = _position - start;
@@ -44,17 +44,15 @@ public class Lexer
         
         if (char.IsWhiteSpace(Current))
         {
-            var start = _position;
             while(char.IsWhiteSpace(Current))
                 Next();
             var length = _position - start;
             var text = _text.Substring(start, length);
             return new SyntaxToken(SyntaxKind.Whitespace, start, text, null);
         }
-
+        
         if (char.IsLetter(Current))
         {
-            var start = _position;
             while(char.IsLetter(Current))
                 Next();
             var length = _position - start;
@@ -78,17 +76,41 @@ public class Lexer
             case ')':
                 return new SyntaxToken(SyntaxKind.RightParanthesis, _position++, ")", null);
             case '!':
-                return Lookahead == '=' ? new SyntaxToken(SyntaxKind.NotEquals, _position += 2, "!=", null) : new SyntaxToken(SyntaxKind.Not, _position++, "!", null);
+            {
+                if (Lookahead == '=')
+                {
+                    _position += 2;
+                    return new SyntaxToken(SyntaxKind.NotEquals, start, "!=", null);
+                }
+
+                _position++;
+                return new SyntaxToken(SyntaxKind.Not, start, "!", null);
+            }
             case '&':
                 if (Lookahead == '&')
-                    return new SyntaxToken(SyntaxKind.And, _position += 2, "&&", null);
+                {
+                    _position += 2;
+                    return new SyntaxToken(SyntaxKind.And, start, "&&", null);
+                }
                 break;
             case '|':
                 if (Lookahead == '|')
-                    return new SyntaxToken(SyntaxKind.Or, _position += 2, "||", null);
+                {
+                    _position += 2;
+                    return new SyntaxToken(SyntaxKind.Or, start, "||", null);
+                }
                 break;
             case '=':
-                return Lookahead == '=' ? new SyntaxToken(SyntaxKind.Equals, _position += 2, "==", null) : new SyntaxToken(SyntaxKind.Assign, _position++, "=", null);
+            {
+                if (Lookahead == '=')
+                {
+                    _position += 2;
+                    return new SyntaxToken(SyntaxKind.Equals, start, "==", null);
+                }
+
+                _position++;
+                return new SyntaxToken(SyntaxKind.Assign, start, "=", null);
+            }
             default:
                 throw new ArgumentOutOfRangeException(nameof(Current));
         }
